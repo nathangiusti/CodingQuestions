@@ -1,5 +1,7 @@
 package codingquestions;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -9,7 +11,7 @@ import java.util.Set;
 public class MinimumWindowSubscreen {
 
     public static void main(String margv[]) {
-
+        
         test("ADOBECODEBANC", "ABC", "BANC");
         test("ADDDDDDDADBC", "ABC", "ADBC");
         test("aaaaaabbbbbcdd", "abcdd", "abbbbbcdd");
@@ -32,63 +34,56 @@ public class MinimumWindowSubscreen {
 
     public static String minimumSubString(String str, String charSet) {
 
-        char[] array = str.toCharArray();
-
         int retVal = str.length() + 1;
         int end = -1;
 
-        ArrayList<Character> charArr = new ArrayList<Character>();
-        ArrayList<Character> currArr = new ArrayList<Character>();
+        int strBegin = 0;
 
-        for (char c : charSet.toCharArray())
-            charArr.add(c);
-
-        HashMap<Character, Integer> charMap = arrayToMap(charArr);
+        HashMap<Character, Integer> charMap = arrayToMap(charSet);
         HashMap<Character, Integer> currMap = new HashMap<Character, Integer>();
-        
-        //We're only gonna track characters in the character set
-        for(Character c : charMap.keySet())
+
+        // We're only gonna track characters in the character set
+        for (Character c : charMap.keySet())
             currMap.put(c, 0);
 
         for (int i = 0; i < str.length(); i++) {
-            currArr.add(array[i]);
-            
-            //If it's in the character set, update the currmap, else skip
-            if(charMap.get(array[i]) != null)
-                currMap.put(array[i], currMap.get(array[i]) + 1);
+            char c = str.charAt(i);
+
+            // If it's in the character set, update the currmap, else skip
+            if (charMap.get(c) != null)
+                currMap.put(c, currMap.get(c) + 1);
             else
                 continue;
 
-            //Go to the beginning of the string and remove any characters that either:
-            //Aren't in the charMap
-            //Appear more frequently than they are in the charmap
-            while (charMap.get(currArr.get(0)) == null || currMap.get(currArr.get(0)) > charMap.get(currArr.get(0))) {
-                if(charMap.get(currArr.get(0)) != null)
-                    currMap.put(currArr.get(0), currMap.get(currArr.get(0)) - 1);
-                currArr.remove(0);
+            // Go to the beginning of the string and remove any characters that either:
+            // Aren't in the charMap
+            // Appear more frequently than they are in the charmap
+
+            c = str.charAt(strBegin);
+            while (charMap.get(c) == null || currMap.get(c) > charMap.get(c)) {
+                if (charMap.get(c) != null)
+                    currMap.put(c, currMap.get(c) - 1);
+                strBegin++;
+                c = str.charAt(strBegin);
             }
 
-            //Check if our current string contains charmap
-            if (hasCompleteSet(currMap, charMap)) {
-                //Just track the last index of the string and it's length 
-                if (retVal > currArr.size()) {
-                    retVal = currArr.size();
-                    end = i;
-                }
+            // Check if our current string contains charmap
+            if (retVal > i - strBegin + 1 && hasCompleteSet(currMap, charMap)) {
+                retVal = i - strBegin + 1;
+                end = i;
             }
         }
-        if(end < 0)
+        if (end < 0)
             return "";
-        
-        String retStr = "";
-        for (int i = end - retVal + 1; i <= end; i++)
-            retStr += array[i];
-        return retStr;
+
+        return str.substring(end - retVal + 1, end + 1);
     }
 
-    private static HashMap<Character, Integer> arrayToMap(ArrayList<Character> charArr) {
+
+
+    private static HashMap<Character, Integer> arrayToMap(String charSet) {
         HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
-        for (Character c : charArr)
+        for (char c : charSet.toCharArray())
             if (charMap.get(c) == null)
                 charMap.put(c, 1);
             else
