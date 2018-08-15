@@ -14,46 +14,50 @@ public class ValidIps {
     }
 
     public static List<String> restoreIpAddresses(String s) {
-        
-        if(s.length()< 4)
+
+        if (s.length() < 4)
             return new ArrayList<String>();
 
-        HashSet<String> sets = getValidIps(s.substring(0,1), s.substring(1));
-
-        ArrayList<String> ret = new ArrayList<String>();
-
-        for (String str : sets)
-            ret.add(str);
+        ArrayList<String> ret = new ArrayList<String>(getValidIps(s.substring(0, 1), s.substring(1)));
 
         return ret;
     }
 
     private static HashSet<String> getValidIps(String head, String tail) {
         HashSet<String> ret = new HashSet<String>();
-        String[] strArr = (head + tail).split("\\.");
+        String curr = head + tail;
 
-        // Are these valid?
-        for (int i = 0; i < strArr.length - 1; i++)
-            if (strArr[i].length() > 3 || Integer.parseInt(strArr[i]) > 255 || 
-                    (strArr[i].startsWith("0") && strArr[i].length() > 1))
-                return new HashSet<String>();
-
-        if (strArr.length == 4) {
-            if (strArr[3].length() > 3 || Integer.parseInt(strArr[3]) > 255 || 
-                    (strArr[3].startsWith("0") && strArr[3].length() > 1))
-                return new HashSet<String>();
-            else
+        // We have 4 parts to our IP
+        if (curr.split("\\.").length == 4) {
+            if (isValidIp(curr))
                 ret.add(head + tail);
-        } else if (tail.length() > 1) {
-            if (!head.endsWith("."))
-                ret.addAll(getValidIps(head + "." + tail.substring(0, 1), tail.substring(1)));
-            ret.addAll(getValidIps(head + tail.substring(0, 1), tail.substring(1)));
-        } else if (tail.length() == 1) {
-            if (!head.endsWith("."))
-                ret.addAll(getValidIps(head + "." + tail.substring(0, 1), ""));
-            ret.addAll(getValidIps(head + tail.substring(0, 1), ""));
+            return ret;
         }
 
+        if (tail.length() > 0) {
+            String[] withDot = shift(head + ".", tail);
+            String[] withoutDot = shift(head, tail);
+
+            if (isValidIp(head)) {
+                ret.addAll(getValidIps(withDot[0], withDot[1]));
+                ret.addAll(getValidIps(withoutDot[0], withoutDot[1]));
+            }
+        }
         return ret;
+    }
+
+    private static String[] shift(String head, String tail) {
+        if (tail.length() <= 1)
+            return new String[] {head + tail, ""};
+        else
+            return new String[] {head + tail.substring(0, 1), tail.substring(1)};
+    }
+
+    private static boolean isValidIp(String input) {
+        String[] strArr = input.split("\\.");
+        for (String str : strArr)
+            if (str.length() > 3 || Integer.parseInt(str) > 255 || (str.startsWith("0") && str.length() > 1))
+                return false;
+        return true;
     }
 }
