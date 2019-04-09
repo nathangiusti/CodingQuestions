@@ -1,5 +1,3 @@
-package codingquestions;
-
 public class ReverseStringNoMem {
     
     public static void main(String[] args) {
