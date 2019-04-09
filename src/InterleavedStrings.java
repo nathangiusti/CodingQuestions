@@ -1,3 +1,5 @@
+package main.java.codingquestions;
+
 /* Given three strings - A, B, C - determine if C is a valid interleaved
 combination of A and B. The characters within A and B should appear in their
 original order, but they can be interleaved arbitrarily (e.g. all of A"s
@@ -35,8 +37,6 @@ public class InterleavedStrings {
 		assert isInterleaved("aaab", "aaaa", "baaaaaaa") == false : "Test failed";
 		assert isInterleaved("aaaa", "aaab", "aabaaaaa") == false : "Test failed";
 		assert isInterleaved("abaac", "aabac", "aabaabacca") == false : "Test failed";
-		
-		System.out.println("Test passed");
 		 
 	}
 	
