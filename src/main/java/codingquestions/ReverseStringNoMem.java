@@ -1,4 +1,4 @@
-package codingquestions;
+package main.java.codingquestions;
 
 public class ReverseStringNoMem {
     

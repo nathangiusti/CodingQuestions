@@ -1,4 +1,4 @@
-package codingquestions;
+package main.java.codingquestions;
 
 import java.util.ArrayList;
 
